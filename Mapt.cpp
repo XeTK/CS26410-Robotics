@@ -9,13 +9,14 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 	int dif = (int)((int)(yaw * 100) / 22.5);
 	if (dif < 0)
 		dif = dif * -1;
-	int jigged[16], i,k;
+	double jigged[16];
+	int i,k;
 	for (i = 0;i < 16; i++)
 	{
 		int j = i + dif;
 		if (j > 15)
 			j = j - 15;
-		jigged[i] = range(sp[j]);
+		jigged[i] = sp[j];
 	}
 	x += 16;
 	y += 16;
@@ -45,10 +46,10 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 	{
 		for (k = 0;k <32;k++)
 		{
-			if (grid[i][k] > 0)
+			if (grid[i][k] == 0)
+				printf("*");
+			else if (grid[i][k] >= 1)				
 				printf(" ");
-			else
-				printf("#");
 		}
 		printf("\n");
 	}
@@ -57,11 +58,9 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 int Mapt::range(double in)
 {
 	int ret =0;
-	if (in > 0.5)
+	if (in > 1.5)
 		ret = 0;
-	else if (in > 0.1)
-		ret = 1;
 	else
-		ret = 2;
+		ret = 1;
 	return ret;
 }
