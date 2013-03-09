@@ -4,6 +4,6 @@
 class Mapt
 {
 	public:
-		void sens(double sp[]);
+		void sens(double sp[],int x, int y, double yaw);
 		int range(double in);
 };

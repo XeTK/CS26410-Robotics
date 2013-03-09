@@ -27,12 +27,12 @@
  *                                           */
 
 #include <iostream>
+#include "Mapt.h"
 #include <libplayerc++/playerc++.h>
+using namespace PlayerCc; 
 static int dir = 1, preX = 0, preY =0;
-	int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	using namespace PlayerCc;
 
 	PlayerClient    robot("localhost");
 	RangerProxy      sp(&robot,0);
@@ -42,13 +42,17 @@ main(int argc, char *argv[])
 	
 	for(;;)
 	{
-		double turnrate, speed;
-//		dd	turnrate = dtor(90);
-//                pp.SetSpeed(1, dtor(0));
-		//  read from the proxies
 		robot.Read();
-
-		//         print out sonars for fun
+		double temp[16];
+		int i;
+		Mapt m; 
+		for (i =1;i < 16;i++)
+			temp[i] = (double)sp[i];
+//		int blah = m.range(temp[1]);
+//		printf("%i",blah);
+		//m.sens(temp);
+		double turnrate, speed;
+		
 //		std::cout << sp << std::endl;
 
 		//             do simple collision avoidance
@@ -58,9 +62,10 @@ main(int argc, char *argv[])
 		int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
                 if (x != preX||y != preY)
 		{
-			std::cout << x << " " << y  << std::endl;
+			//std::cout << x << " " << y  << std::endl;
 			preX = x;
 			preY = y;
+			m.sens(temp,x,y,pp.GetYaw());
 		}
 
 		if (sp[3] < far||sp[4] < far|| sp[1] < close|| sp[6] < close || sp[0] < close || sp[7] < close)
@@ -87,13 +92,13 @@ main(int argc, char *argv[])
 			else 
 			{
 				turnrate = dtor((11.75)) * dir;
-				speed = 0.01;
+				speed = 0.1;
 			}
 		}
 		else
 		{
 			//speed = 2; //Robot
-			speed = 0.1; //sim
+			speed = 0.2; //sim
 			turnrate = dtor(0);
 		}
 		
@@ -101,5 +106,3 @@ main(int argc, char *argv[])
 
 	}
 }
-
-
