@@ -29,29 +29,37 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 	y += 16;
 	/*Display are X & Y to the screen so we can see what is happerning*/
 	printf("X:%i,Y:%i\n",x,y);
-
+	grid[x][y] = -1;
 	/**For the next section we inrement the cells round the robot to see what is ocupised and what is not*/
 	/*Sensors at the top of the robot*/
 	if ((y - 1) >= 0)
 	{
 		if ((x - 1) >= 0)
-			grid[x - 1][y - 1] += (range(jigged[1]) + range(jigged[2]));
-		grid[x][y -1] += (range(jigged[3]) + range(jigged[4]));
+			if (grid[x -1][y -1] != -1)
+				grid[x - 1][y - 1] += (range(jigged[1]) + range(jigged[2]));
+		if (grid[x][y-1] != -1)
+			grid[x][y -1] += (range(jigged[3]) + range(jigged[4]));
 		if ((x + 1) < 16)
-			grid[x + 1][y - 1] += (range(jigged[6]) + range(jigged[7]));
+			if (grid[x + 1][y - 1] != -1)
+				grid[x + 1][y - 1] += (range(jigged[6]) + range(jigged[7]));
 	}	
 	/*Sensors either side of the robot*/
 	if ((x - 1) >=0)
-		grid[x -1][y] += (range(jigged[0]) + range(jigged[15]));
+		if (grid[x -1][y] != -1)
+			grid[x -1][y] += (range(jigged[0]) + range(jigged[15]));
 	if ((x + 1) < 16)
-		grid[x +1][y] += (range(jigged[7]) + range(jigged[8]));
+		if (grid[x + 1][y] != -1)
+			grid[x +1][y] += (range(jigged[7]) + range(jigged[8]));
 	/*Sensors at the bottom of the robot*/
 	if ((y + 1) < 16)
 	{
 		if ((x -1) >= 0)
-			grid[x - 1][y + 1] += (range(jigged[14]) + range(jigged[13]));
-		grid[x][y + 1] += (range(jigged[12]) + range(jigged[11]));
+			if (grid[x -1][y + 1] != -1)
+				grid[x - 1][y + 1] += (range(jigged[14]) + range(jigged[13]));
+		if (grid[x][y + 1] != -1)
+			grid[x][y + 1] += (range(jigged[12]) + range(jigged[11]));
 		if((x +1) < 16)
+			if (grid[x + 1][y + 1] != -1)
 			grid[x + 1][y + 1] += (range(jigged[10]) + range(jigged[9]));     
 	}
 	/*lastly we print out the grid*/
@@ -60,9 +68,11 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 		for (k = 0;k <32;k++)
 		{
 			if (grid[i][k] == 0)
-				printf("*");
+				printf("\e[34m-");
 			else if (grid[i][k] >= 1)				
-				printf(" ");
+				printf("\e[35m=");
+			else
+				printf("\e[33m*");
 		}
 		printf("\n");
 	}
