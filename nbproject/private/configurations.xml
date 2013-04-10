@@ -5,6 +5,7 @@
       <in>Mapt.cpp</in>
       <in>Mapt.h</in>
       <in>simple.cpp</in>
+      <in>simple.h</in>
     </df>
   </logicalFolder>
   <projectmakefile>player.sh</projectmakefile>

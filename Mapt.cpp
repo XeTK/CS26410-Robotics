@@ -10,15 +10,17 @@ public:
 
 };
 /*This class creates a ocupancy grid for a robots travel from, sensor readings, X & Y cordinates and robots current Yaw/Angle*/
-using namespace std;
+using namespace PlayerCc;
 /*Keep a static grid of location on the grid*/
 static rsens grid[32][32];
 static vector<double> vtop, vbottom, vleft, vright;
 /*Method to convert are values into a grid to be displayed*/
-void Mapt::sens(double sp[],int x, int y, double yaw)
+void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, double yaw)
 {
+    if (sp.GetRangeCount() != 0)
+    {
 	/*Convert are yaw into the difference between sensors so that robotic is 'always facing the same direction'*/
-	int dif = (int)((int)(yaw * 100) / 22.5);
+	int dif = (int)((int)(yaw + 180) / 22.5);
 	/*if value is less than 0 flip it to positive*/
 	if (dif < 0)
 		dif = dif * -1;
@@ -31,7 +33,8 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 		int j = i + dif;
 		if (j > 15)
 			j = j - 15;
-		jigged[i] = sp[j];
+                
+		jigged[i] = (double)sp[j];
 	}
 	//fix stages odd negative cordinates
 	x += 16;
@@ -93,6 +96,7 @@ void Mapt::sens(double sp[],int x, int y, double yaw)
 		cout << endl;
 	}
 	cout << endl;
+    }
 }
 /*Range converts are double into a int of a specific value so we can gage how close we are to something*/		
 void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, string type)
@@ -138,7 +142,7 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                 }
         }
 }
-double Mapt::av(vector<double> in)
+double Mapt::av(std::vector<double> in)
 {
     double ret = 0;
     for (int i =0; i < in.size();i++)
