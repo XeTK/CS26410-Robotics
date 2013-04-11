@@ -11,6 +11,7 @@
 class simple
 {
 public:
+    static void nav();
     static void turnangle(int angle);
     static void turntoangle(int angle);
     static void align();

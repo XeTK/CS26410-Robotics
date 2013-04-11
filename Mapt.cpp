@@ -44,15 +44,7 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, double yaw)
 	grid[x][y].read = -1;
         grid[x][y].type = "";
 	/**For the next section we inrement the cells round the robot to see what is ocupised and what is not*/
-	/*		grid[x - 1][y - 1] += (range(jigged[1]) + range(jigged[2]));
-			grid[x][y -1] += (range(jigged[3]) + range(jigged[4]));
-			grid[x + 1][y - 1] += (range(jigged[6]) + range(jigged[7]));
-			grid[x -1][y] += (range(jigged[0]) + range(jigged[15]));
-			grid[x +1][y] += (range(jigged[7]) + range(jigged[8]));
-			grid[x - 1][y + 1] += (range(jigged[14]) + range(jigged[13]));
-			grid[x][y + 1] += (range(jigged[12]) + range(jigged[11]));
-			grid[x + 1][y + 1] += (range(jigged[10]) + range(jigged[9])); 
-	*/
+
 	//range(x - 1, y - 1, x - 2, y - 1, (jigged[1]+jigged[2]));
 	range(x, y -1, x -1, y -1, (jigged[3] + jigged[4]),av(vtop),"top");
         vtop.push_back(jigged[3] + jigged[4]);
@@ -108,7 +100,8 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                 {
                         if(grid[ox][oy].read != -1)
                         {
-                                if (sens > range)
+                            cout << sens << endl;
+                                if (sens > range&&sens > 5)
                                 {
                                         grid[ox][oy].read = sens;
                                         grid[ox][oy].type = type;
@@ -128,7 +121,7 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                 {
                         if(grid[sx][sy].read != -1)
                         {
-                                if (sens > range)
+                                if (sens > range&&sens > 5)
                                 {
 					grid[sx][sy].read = sens;
                                         grid[sx][sy].type = type;
@@ -146,7 +139,7 @@ double Mapt::av(std::vector<double> in)
 {
     double ret = 0;
     for (int i =0; i < in.size();i++)
-        ret += in[i] + ((in[i] / 100) * 25);
+        ret += in[i] + ((in[i] / 100) * 10);
     ret = ret / in.size();
     //cout << "< " << ret << endl;
     return ret;

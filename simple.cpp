@@ -15,15 +15,27 @@ int main(int argc, char *argv[])
         int prex, prey, dir;
         
         robot.Read();
+        simple::move(5);/*
+        simple::turnangle(90);
+        simple::move(22);
+        simple::turnangle(-90);
+        simple::move(1);
+        simple::turnangle(-90);
+        simple::move(22);
+        simple::turnangle(90);
         simple::move(10);
+        simple::turnangle(-90);
+        simple::move(1);
+        simple::turnangle(-90);
+        simple::move(20);
+        simple::turnangle(-90);
+        simple::move(20);*/
 
 	for(;;)
 	{
 		robot.Read();
                 if (sp.GetRangeCount() != 0)
                 {
-                    double turnrate, speed;
-
                     int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
 
                     if (x != prex||y != prey)
@@ -31,14 +43,27 @@ int main(int argc, char *argv[])
                         prex = x;
                         prey = y;
                         Mapt::sens(sp,x,y,rtod(pp.GetYaw()));
-
                     }
-
+                    simple::nav();
                 }
-                pp.SetSpeed(0,dtor(0));
-                break;
 	}
         
+}
+void simple::nav()
+{
+    if (sp[3] < 0.75||sp[4] < 0.75)
+        turnangle(270);
+    
+    if (sp[0] > 4 && sp[15] > 4)
+    {
+        if ((int)sp[7] != (int)sp[0])
+        {
+            move(1);
+            turnangle(90);
+            move(1);
+        }
+    }
+    pp.SetSpeed(0.5,0);
 }
 void simple::turnangle(int angle)
 {
@@ -47,6 +72,9 @@ void simple::turnangle(int angle)
     
     if (dd > 360)
         dd = dd - 360;
+    
+    if (dd < 0)
+        dd = dd + 360;
     
     for (;;)
     {
@@ -104,7 +132,7 @@ void simple::turntoangle(int angle)
     }       
 }
 
-void simple::align()
+/*void simple::align()
 {
     if (sp[0] < sp[7])
         simple::turnangle(180);
@@ -126,29 +154,72 @@ void simple::align()
         pp.SetSpeed(speed,turnrate);
     }
     
-}
+}*/
 void simple::move(int distance)
 {
     int angle = rtod(pp.GetYaw()) + 180;
     
-    cout << (angle / 90) << endl;
-    
     if ((angle % 90) != 0)
         turntoangle((int)(angle / 90) * 90);
+    
     int dir = angle / 90;
+
+    cout << "Dir " << dir << endl;
     
-    int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
-    
-    int prex = x, prey = y;
+    int prex = ((pp.GetXPos() * 100) / 60), prey = ((pp.GetYPos() * 100) / 60);
         
     for (;;)
     {
+        robot.Read(); 
+        
+        int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
+        
+        double speed, turnrate;
         if (dir == 2 || dir == 4)
+        {
             if (prex + distance == x)
+            {
                 break;
-        else if (dir == 1 || dir == 3)
+            }
+            else
+            {
+                speed = 0.5;
+            }
+        }
+        else if (dir == 4)
+        {
+             if (prex - distance == x)
+            {
+                break;
+            }
+            else
+            {
+                speed = 0.5;
+            }
+        }
+        else if (dir == 1)
+        {
+            if (prey - distance == y)
+            {
+                break;
+            }
+            else
+            {
+                speed = 0.5;
+            }
+        }
+        else if (dir == 3)
+        {
             if (prey + distance == y)
+            {
                 break;
-        pp.SetSpeed(0.1,dtor(0));
+            }
+            else
+            {
+                speed = 0.5;
+            }
+        }
+        Mapt::sens(sp,x,y,rtod(pp.GetYaw()));
+        pp.SetSpeed(speed, dtor(0));
     }
 }
