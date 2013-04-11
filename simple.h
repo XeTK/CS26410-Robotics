@@ -12,6 +12,7 @@ class simple
 {
 public:
     static void turnangle(int angle);
+    static void turntoangle(int angle);
     static void align();
     static void move(int distance);
 };
