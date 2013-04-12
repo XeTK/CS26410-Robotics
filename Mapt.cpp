@@ -15,55 +15,34 @@ using namespace PlayerCc;
 static rsens grid[32][32];
 static vector<double> vtop, vbottom, vleft, vright;
 /*Method to convert are values into a grid to be displayed*/
-void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, double yaw)
+void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 {
-    if (sp.GetRangeCount() != 0)
-    {
-	/*Convert are yaw into the difference between sensors so that robotic is 'always facing the same direction'*/
-	int dif = (int)((int)(yaw + 180) / 22.5);
-	/*if value is less than 0 flip it to positive*/
-	if (dif < 0)
-		dif = dif * -1;
-	/*tempory array to hold are ajusted sensor index's*/
-	double jigged[16];
-	int i,k;
-	/*convert are in sensor readings to are jigged always faceing the same direction ones*/
-	for (i = 0;i < 16; i++)
-	{
-		int j = i + dif;
-		if (j > 15)
-			j = j - 15;
-                
-		jigged[i] = (double)sp[j];
-	}
-	//fix stages odd negative cordinates
+
 	x += 16;
 	y += 16;
-	/*Display are X & Y to the screen so we can see what is happerning*/
+
 	printf("X:%i,Y:%i\n",x,y);
 	grid[x][y].read = -1;
         grid[x][y].type = "";
-	/**For the next section we inrement the cells round the robot to see what is ocupised and what is not*/
 
-	//range(x - 1, y - 1, x - 2, y - 1, (jigged[1]+jigged[2]));
-	range(x, y -1, x -1, y -1, (jigged[3] + jigged[4]),av(vtop),"top");
-        vtop.push_back(jigged[3] + jigged[4]);
+	range(x, y -1, x -1, y -1, (sp[3] + sp[4]),av(vtop),"top");
+        vtop.push_back(sp[3] + sp[4]);
+       
+
+	range(x -1,y, x-2,y,(sp[0] + sp[15]),av(vleft),"left");
+        vleft.push_back(sp[0] + sp[15]);
         
-	//range(x + 1, y - 1, x + 2, y -1,(jigged[6] + jigged[7]));
+	/*range(x +1,y, x+2,y,(sp[7] + sp[8]),av(vright),"right");
+        vright.push_back(sp[7] + sp[8]);
 
-	range(x -1,y, x-2,y,(jigged[0] + jigged[15]),av(vleft),"left");
-        vleft.push_back(jigged[0] + jigged[15]);
-	range(x +1,y, x+2,y,(jigged[7] + jigged[8]),av(vright),"right");
-        vright.push_back(jigged[7] + jigged[8]);
 
-	//range(x - 1, y + 1, x - 2, y + 1,(jigged[14] + jigged[13]));
-	range(x, y + 1, x + 1, y + 1, (jigged[12] + jigged[11]),av(vbottom),"bottom");
-        vbottom.push_back(jigged[12] + jigged[11]);
-	//range(x + 1, y +1, x + 2, y + 1, (jigged[10] + jigged[9]));
+	range(x, y + 1, x + 1, y + 1, (sp[12] + sp[11]),av(vbottom),"bottom");
+        vbottom.push_back(sp[12] + sp[11]);*/
 
-	for (i = 0; i < 32;i++)
+
+	for (int i = 0; i < 32;i++)
 	{
-		for (k = 0;k <32;k++)
+		for (int k = 0;k <32;k++)
 		{
 			if (grid[i][k].read == 0)
                         {
@@ -88,7 +67,7 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, double yaw)
 		cout << endl;
 	}
 	cout << endl;
-    }
+    
 }
 /*Range converts are double into a int of a specific value so we can gage how close we are to something*/		
 void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, string type)
@@ -101,7 +80,7 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                         if(grid[ox][oy].read != -1)
                         {
                             cout << sens << endl;
-                                if (sens > range&&sens > 5)
+                                if (sens > range)
                                 {
                                         grid[ox][oy].read = sens;
                                         grid[ox][oy].type = type;
@@ -121,7 +100,7 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                 {
                         if(grid[sx][sy].read != -1)
                         {
-                                if (sens > range&&sens > 5)
+                                if (sens > range)
                                 {
 					grid[sx][sy].read = sens;
                                         grid[sx][sy].type = type;
@@ -139,9 +118,9 @@ double Mapt::av(std::vector<double> in)
 {
     double ret = 0;
     for (int i =0; i < in.size();i++)
-        ret += in[i] + ((in[i] / 100) * 10);
+        ret += (in[i] - ((in[i] / 100) * 25));
     ret = ret / in.size();
-    //cout << "< " << ret << endl;
+
     return ret;
 }
 double Mapt::gv(string type)
@@ -156,4 +135,27 @@ double Mapt::gv(string type)
         return av(vleft);
     else
         return 0;
+}
+void Mapt::jiggedsens(double *&array, PlayerCc::RangerProxy &sp, int yaw)
+{
+    if (sp.GetRangeCount() != 0)
+    {
+
+	int dif = (int)((int)(yaw + 180) / 22.5);
+
+	if (dif < 0)
+		dif = dif * -1;
+        
+	double* jigged = new double[16];
+
+	for (int i = 0;i < 16; i++)
+	{
+		int j = i + dif;
+		if (j > 15)
+			j = j - 15;
+                
+		jigged[i] = (double)sp[j];
+	}
+        array = jigged;
+     }
 }

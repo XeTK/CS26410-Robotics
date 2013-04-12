@@ -16,6 +16,7 @@ public:
     static void turntoangle(int angle);
     static void align();
     static void move(int distance);
+    static void gotocord(int x, int y);
 };
 
 #endif	/* SIMPLE_H */
