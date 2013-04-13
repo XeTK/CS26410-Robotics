@@ -3,6 +3,7 @@
 #include <libplayerc++/playerc++.h>
 #include "rsens.h"
 #include "Mapt.h"
+#include "mapc.h"
 
 
 /*This class creates a ocupancy grid for a robots travel from, sensor readings, X & Y cordinates and robots current Yaw/Angle*/
@@ -14,11 +15,9 @@ static vector<double> vtop, vbottom, vleft, vright;
 
 void Mapt::start()
 {
-    cout << "we have an array" << endl;
     grid = new rsens *[32];
     for (int i = 0; i < 32; i++)
         grid[i] = new rsens[32];
-    cout << grid << endl;
 }
 void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 {
@@ -171,5 +170,70 @@ void Mapt::getGrid(rsens ***array)
 }
 vector<int> Mapt::search(int sx, int sy, int dx, int dy)
 {
+    vector<int> list;
+    int dirx = 0, diry = 0;
     
+    if (sx < dx)
+        dirx = 1;
+    else
+        dirx = -1;
+    
+    if (sy < dy)
+        diry = 1;
+    else
+        diry = -1;
+        
+    mapc c(sx,sy);
+    
+    if (dirx == 1)
+    {
+        if (diry == 1)
+        {
+            if (c.getRight() == true)
+            {
+                list.push_back(180);
+            }
+            else if (c.getTop() == true)
+            {
+                list.push_back(90);
+            }
+        }
+        else if (diry == -1)
+        {
+            if (c.getRight() == true)
+            {
+                list.push_back(180);
+            }
+            else if (c.getBottom() == true)
+            {
+                list.push_back(270);
+            }
+        }
+    }
+    else if (dirx == -1)
+    {
+        if (diry == 1)
+        {
+            if (c.getLeft() == true)
+            {
+                list.push_back(0);
+            }
+            else if (c.getTop() == true)
+            {
+                list.push_back(90);
+            }
+        }
+        else if (diry == -1)
+        {
+            if (c.getLeft() == true)
+            {
+                list.push_back(0);
+            }
+            else if (c.getBottom() == true)
+            {
+                list.push_back(270);
+            }
+        }
+    }
+        
 }

@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
 }
 void simple::nav()
 {
-    cout << "nav" << endl;
     if (sp[3] < 0.5||sp[4] < 0.5)
     {
         if ((int)sp[7] == (int)sp[0])
@@ -100,31 +99,7 @@ void simple::nav()
 }
 void simple::gotocord(int x, int y)
 {
-    int dir = 1;
-    for (;;)
-    {
-        robot.Read();
-        
-        int ix = (((pp.GetXPos() * 100) / 60) + 16), iy = (((pp.GetYPos() * 100) / 60) + 16);
-        
-        if (ix == x || iy == y)
-        {
-            if (dir == 1)
-                dir = -1;
-            else
-                dir = 1;
-        }
-        if (dir == 1)
-        {
-            
-        }
-        else if (dir == -1)
-        {
-            
-        }
-        
-    }
-    cout << "Got there" << endl;
+    
 }
 void simple::turnangle(int angle)
 {
@@ -266,7 +241,7 @@ void simple::move(int distance)
         
         int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
         
-        if (dir == 2 || dir == 4)
+        if (dir == 2)
         {
             if (prex + distance == x)
             {
