@@ -1,20 +1,25 @@
 #include <iostream>
 #include <stdio.h>
 #include <libplayerc++/playerc++.h>
+#include "rsens.h"
 #include "Mapt.h"
 
-class rsens {
-public:
-    double read;
-    std::string type;
 
-};
 /*This class creates a ocupancy grid for a robots travel from, sensor readings, X & Y cordinates and robots current Yaw/Angle*/
 using namespace PlayerCc;
 /*Keep a static grid of location on the grid*/
-static rsens grid[32][32];
+static rsens **grid;
 static vector<double> vtop, vbottom, vleft, vright;
 /*Method to convert are values into a grid to be displayed*/
+
+void Mapt::start()
+{
+    cout << "we have an array" << endl;
+    grid = new rsens *[32];
+    for (int i = 0; i < 32; i++)
+        grid[i] = new rsens[32];
+    cout << grid << endl;
+}
 void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 {
 
@@ -158,4 +163,13 @@ void Mapt::jiggedsens(double *&array, PlayerCc::RangerProxy &sp, int yaw)
 	}
         array = jigged;
      }
+    
+}
+void Mapt::getGrid(rsens ***array)
+{
+    *array = grid;
+}
+vector<int> Mapt::search(int sx, int sy, int dx, int dy)
+{
+    
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Mapt.h"
 #include "simple.h"
+#include "mapc.h"
 #include <libplayerc++/playerc++.h>
 using namespace PlayerCc;
 
@@ -13,13 +14,14 @@ int main(int argc, char *argv[])
 	pp.SetMotorEnable(true);
         robot.Read();
         
+        Mapt::start();
+        
         int prex, prey, dir;
         
         
         simple::move(1);
         simple::align();
-        
-        
+       
         
         /*simple::turnangle(90);
         simple::move(22);
@@ -48,8 +50,10 @@ int main(int argc, char *argv[])
                         prex = x;
                         prey = y;
                         Mapt::sens(sp,x,y);
+                        mapc m(x,y);
                     }
                     simple::nav();
+                            
                 }
 	}
         
@@ -139,7 +143,6 @@ void simple::turnangle(int angle)
         robot.Read();
         double turnrate = 0;
         int curd = (rtod(pp.GetYaw()) + 180);
-        cout << curd << endl;
         if (curd == dd)
             break;
         
