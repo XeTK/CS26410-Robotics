@@ -18,11 +18,12 @@ public:
     bool getRight();
     int getX();
     int getY();
+    static bool valid(int ix, int iy);
 private:
     int x, y;
     bool top,bottom,left,right;
     void check();
-    bool valid(int ix, int iy);
+    
 };
 
 

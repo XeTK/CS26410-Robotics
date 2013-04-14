@@ -5,8 +5,8 @@
 #define FREE -1
 mapc::mapc(int x, int y)
 {
-    this->x = x + 16;
-    this->y = y + 16;
+    this->x = x;
+    this->y = y;
     check();
 }
 
@@ -17,7 +17,7 @@ void mapc::check()
 
     if (map)
     {
-        int ix = x, iy = (y - 1);
+        int ix = x, iy = (y + 1);
         
         if (valid(ix,iy))
             if (map[ix][iy].read == 0)
@@ -27,7 +27,7 @@ void mapc::check()
         else 
             top = false;
         
-        iy = (y + 1);
+        iy = (y - 1);
         
         if (valid(ix,iy))
             if (map[ix][iy].read == 0)

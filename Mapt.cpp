@@ -21,10 +21,6 @@ void Mapt::start()
 }
 void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 {
-
-	x += 16;
-	y += 16;
-
 	printf("X:%i,Y:%i\n",x,y);
 	grid[x][y].read = -1;
         grid[x][y].type = "";
@@ -171,7 +167,7 @@ void Mapt::getGrid(rsens ***array)
 vector<int> Mapt::search(int sx, int sy, int dx, int dy)
 {
     vector<int> list;
-    int dirx = 0, diry = 0;
+    int dirx = -1, diry = -1;
     
     if (sx < dx)
         dirx = 1;
@@ -182,58 +178,117 @@ vector<int> Mapt::search(int sx, int sy, int dx, int dy)
         diry = 1;
     else
         diry = -1;
-        
-    mapc c(sx,sy);
-    
-    if (dirx == 1)
+
+    for (;;)
     {
-        if (diry == 1)
+        mapc c(sx,sy);
+
+        cout << "Sens " << c.getTop() << c.getBottom() << c.getRight() << c.getLeft() << endl;
+        cout << "dir " << dirx << " " << diry << endl;
+        
+        int degree = -1;
+        
+        if (dirx == 1)
+        {
+            if (diry == 1)
+            {
+                if (c.getLeft() == true)
+                {
+                    degree = 0;
+                    sx -= 1;
+                }
+                else if (c.getTop() == true)
+                {
+                    degree = 90;
+                    sy += 1;
+                }
+            }
+            else if (diry == -1)
+            {
+                if (c.getLeft() == true)
+                {
+                    degree = 0;
+                    sx -= 1;
+                }
+                else if (c.getBottom() == true)
+                {
+                    degree = 270;
+                    sy -= 1;
+                }
+            }
+        }
+        else if (dirx == -1)
+        {
+            if (diry == 1)
+            {
+                if (c.getRight() == true)
+                {
+                    degree = 180;
+                    sx += 1;
+                }
+                else if (c.getTop() == true)
+                {
+                    degree = 90;
+                    sy += 1;
+                }
+            }
+            else if (diry == -1)
+            {
+                if (c.getRight() == true)
+                {
+                    degree = 180;
+                    sx += 1;
+                }
+                else if (c.getBottom() == true)
+                {
+                    degree = 270;
+                    sy -= 1;
+                }
+            }
+        }
+        
+        if (degree == -1)
         {
             if (c.getRight() == true)
             {
-                list.push_back(180);
+                degree = 180;
+                sx += 1;
+            }
+            else if (c.getLeft() == true)
+            {
+                degree = 0;
+                sx -= 1;
             }
             else if (c.getTop() == true)
             {
-                list.push_back(90);
-            }
-        }
-        else if (diry == -1)
-        {
-            if (c.getRight() == true)
-            {
-                list.push_back(180);
+                degree = 90;
+                sy += 1;
             }
             else if (c.getBottom() == true)
             {
-                list.push_back(270);
+                degree = 270;
+                sy -= 1;
             }
+            else
+                break;  
         }
-    }
-    else if (dirx == -1)
-    {
-        if (diry == 1)
-        {
-            if (c.getLeft() == true)
-            {
-                list.push_back(0);
-            }
-            else if (c.getTop() == true)
-            {
-                list.push_back(90);
-            }
-        }
-        else if (diry == -1)
-        {
-            if (c.getLeft() == true)
-            {
-                list.push_back(0);
-            }
-            else if (c.getBottom() == true)
-            {
-                list.push_back(270);
-            }
-        }
-    }
+            
         
+        cout << degree << endl;
+        list.push_back(degree);
+        cout << list.size() << endl;
+        cout << list[list.size() -1] << endl;
+        cout << "XY " << sx << " " << sy << endl;
+
+        if (!c.getBottom() && !c.getTop() && !c.getLeft() && !c.getRight())
+            break;
+
+        if (sx == dx && sy == dy)
+            break;
+    }
+    for (int i = 0; i < list.size();i++)
+    {
+        cout << list[i] << endl;
+    }
+    return list;
 }

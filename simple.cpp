@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdlib.h>
+#include <signal.h>
 #include "Mapt.h"
 #include "simple.h"
 #include "mapc.h"
@@ -8,9 +10,12 @@ using namespace PlayerCc;
  static PlayerClient    robot("localhost");
  static Position2dProxy pp(&robot,0);
  static RangerProxy     sp(&robot,0);
+ static bool retmenu = false;
 int main(int argc, char *argv[])
 {
-        
+    
+    signal(SIGINT,simple::do_sigint);
+    
 	pp.SetMotorEnable(true);
         robot.Read();
         
@@ -40,10 +45,13 @@ int main(int argc, char *argv[])
 
 	for(;;)
 	{
+            int x = ((pp.GetXPos() * 100) / 60) +16, y = ((pp.GetYPos() * 100) / 60) + 16;
+            if (!retmenu)
+            {
 		robot.Read();
                 if (sp.GetRangeCount() != 0)
                 {
-                    int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
+
 
                     if (x != prex||y != prey)
                     {
@@ -55,6 +63,39 @@ int main(int argc, char *argv[])
                     simple::nav();
                             
                 }
+            }
+            else
+            {
+                pp.SetSpeed(0,0);
+                cout << "Menu" << endl;
+                cout << "0: Exit" << endl;
+                cout << "1: Return to nav" << endl;
+                cout << "2: Go to cord" << endl;
+                int a;
+                cin >> a;
+                switch (a)
+                {
+                    case 0:
+                        exit(0);
+                        break;
+                    case 1:
+                        retmenu = false;
+                        break;
+                    case 2:
+                        cout << "Current Location : " << x << " " << y << endl;
+                        int px, py;
+                        cout << "Enter x " << endl;
+                        cin >> px;
+                        cout << "Enter y " << endl;
+                        cin >> py;
+                        simple::gotocord(px,py);
+                                
+                    default:
+                        retmenu = false;
+                        break;
+                }
+                    
+            }
 	}
         
 }
@@ -97,9 +138,16 @@ void simple::nav()
     }
     pp.SetSpeed(0.5,0);
 }
-void simple::gotocord(int x, int y)
+void simple::gotocord(int vx, int vy)
 {
-    
+     int ix = ((pp.GetXPos() * 100) / 60) + 16, iy = ((pp.GetYPos() * 100) / 60) + 16;
+     cout << vx << " " << vy << " " << ix << " " << iy << endl;
+     vector<int> l = Mapt::search(ix,iy,vx,vy);
+     for (int i = 0; i < l.size();i++)
+     {
+         turntoangle(l[i]);
+         move(1);
+     }
 }
 void simple::turnangle(int angle)
 {
@@ -149,25 +197,25 @@ void simple::turntoangle(int angle)
     
     for (;;)
     {
-        robot.Read();
-        double turnrate = 0;
-        int curd = (rtod(pp.GetYaw()) + 180);
-        
-        if (curd == dd)
-            break;
-        
-        if (dd > curd)
-            if ((dd - curd) > 10)
-                turnrate = dtor(10);
+            robot.Read();
+            double turnrate = 0;
+            int curd = (rtod(pp.GetYaw()) + 180);
+
+            if (curd == dd)
+                break;
+
+            if (dd > curd)
+                if ((dd - curd) > 10)
+                    turnrate = dtor(10);
+                else
+                    turnrate = dtor(1);
             else
-                turnrate = dtor(1);
-        else
-            if ((curd - dd) > 10)
-                turnrate = dtor(-10);
-            else
-                turnrate = dtor(-1);
-        
-        pp.SetSpeed(0,turnrate);     
+                if ((curd - dd) > 10)
+                    turnrate = dtor(-10);
+                else
+                    turnrate = dtor(-1);
+
+            pp.SetSpeed(0,turnrate);   
     }  
 }
 
@@ -220,6 +268,7 @@ void simple::align()
 }
 void simple::move(int distance)
 {
+
     cout << "move" << endl;
     int angle = rtod(pp.GetYaw()) + 180;
     
@@ -230,8 +279,17 @@ void simple::move(int distance)
 
     cout << "Dir " << dir << endl;
     
-    int prex = ((pp.GetXPos() * 100) / 60), prey = ((pp.GetYPos() * 100) / 60);
+    int prex = ((pp.GetXPos() * 100) / 60) + 16, prey = ((pp.GetYPos() * 100) / 60) + 16;
         
+    rsens **map;
+    Mapt::getGrid(&map);
+
+    if (map)
+    {
+        map[prex][prey].read = -1;
+        map[prex][prey].type = "";
+    }
+    
     for (;;)
     {
         robot.Read(); 
@@ -239,7 +297,7 @@ void simple::move(int distance)
         if (((sp[4] + sp[3])/2) < 0.4)
             break;
         
-        int x = ((pp.GetXPos() * 100) / 60), y = ((pp.GetYPos() * 100) / 60);
+        int x = ((pp.GetXPos() * 100) / 60) + 16, y = ((pp.GetYPos() * 100) / 60) + 16;
         
         if (dir == 2)
         {
@@ -272,4 +330,9 @@ void simple::move(int distance)
         pp.SetSpeed(0.5, 0);
     }
     pp.SetSpeed(0,0);
+}
+void simple::do_sigint(int dummy)
+{
+    cout << "Menu activated: pleas wait" << endl;
+    retmenu = true;
 }
