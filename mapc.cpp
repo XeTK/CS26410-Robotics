@@ -1,8 +1,14 @@
 #include "mapc.h"
 #include "Mapt.h"
 #include "rsens.h"
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #define UNKNOWN 0
 #define FREE -1
+using namespace std;
+
 mapc::mapc(int x, int y)
 {
     this->x = x;
@@ -20,20 +26,20 @@ void mapc::check()
         int ix = x, iy = (y + 1);
         
         if (valid(ix,iy))
-            if (map[ix][iy].read == 0)
-                top = false;
-            else
+            if (map[ix][iy].read > Mapt::gv(map[ix][iy].type)|| map[ix][iy].read == -1)
                 top = true;
+            else
+                top = false;
         else 
             top = false;
         
         iy = (y - 1);
         
         if (valid(ix,iy))
-            if (map[ix][iy].read == 0)
-                bottom = false;
-            else
+            if (map[ix][iy].read > Mapt::gv(map[ix][iy].type)|| map[ix][iy].read == -1)
                 bottom = true;
+            else
+                bottom = false;
         else
             bottom = false;
         
@@ -41,20 +47,20 @@ void mapc::check()
         ix = (x - 1);
         
         if (valid(ix,iy))
-            if (map[ix][iy].read == 0)
-                left = false;
-            else
+            if (map[ix][iy].read > Mapt::gv(map[ix][iy].type)|| map[ix][iy].read == -1)
                 left = true;
+            else
+                left = false;
         else
             left = false;
         
         ix = (x + 1);
         
         if (valid(ix,iy))
-            if (map[ix][iy].read == 0)
-                right = false;
-            else
+            if (map[ix][iy].read > Mapt::gv(map[ix][iy].type)|| map[ix][iy].read == -1)
                 right = true;
+            else
+                right = false;
         else
             right = false;    
     }        
@@ -67,7 +73,7 @@ int mapc::nabours()
     int ar = 0;
     if (valid(x,y))
     {
-        if (map[x][y].read > 0||map[x][y].read == -1)
+        if (map[x][y].read > Mapt::gv(map[x][y].type)||map[x][y].read == -1)
         {
             //ar++;
             if (top == true)

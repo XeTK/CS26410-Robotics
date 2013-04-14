@@ -33,12 +33,12 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 	range(x -1,y, x-2,y,(sp[0] + sp[15]),av(vleft),"left");
         vleft.push_back(sp[0] + sp[15]);
         
-	/*range(x +1,y, x+2,y,(sp[7] + sp[8]),av(vright),"right");
+	range(x +1,y, x+2,y,(sp[7] + sp[8]),av(vright),"right");
         vright.push_back(sp[7] + sp[8]);
 
 
 	range(x, y + 1, x + 1, y + 1, (sp[12] + sp[11]),av(vbottom),"bottom");
-        vbottom.push_back(sp[12] + sp[11]);*/
+        vbottom.push_back(sp[12] + sp[11]);
 
         vector<mapc> p = find_bp();
 	for (int i = 0; i < 32;i++)
