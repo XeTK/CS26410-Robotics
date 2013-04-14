@@ -2,6 +2,7 @@
 #include <libplayerc++/playerc++.h>
 #include <vector>
 #include "rsens.h"
+#include "mapc.h"
 /*This is the header file for the Mapt.cpp file*/
 using namespace std;
 class Mapt
@@ -18,4 +19,5 @@ class Mapt
                 static void jiggedsens(double *&array, PlayerCc::RangerProxy &sp, int yaw);
                 static vector<int> search(int sx, int sy, int dx, int dy);
                 static void getGrid(rsens ***array);
+                static vector<mapc> find_bp();
 };

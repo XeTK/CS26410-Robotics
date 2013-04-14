@@ -18,6 +18,7 @@ public:
     static void move(int distance);
     static void gotocord(int vx, int vy);
     static void do_sigint(int dummy);
+    static void find_bp();
 };
 
 #endif	/* SIMPLE_H */

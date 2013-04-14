@@ -4,6 +4,7 @@
 #include "rsens.h"
 #include "Mapt.h"
 #include "mapc.h"
+#include "simple.h"
 
 
 /*This class creates a ocupancy grid for a robots travel from, sensor readings, X & Y cordinates and robots current Yaw/Angle*/
@@ -39,11 +40,23 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 	range(x, y + 1, x + 1, y + 1, (sp[12] + sp[11]),av(vbottom),"bottom");
         vbottom.push_back(sp[12] + sp[11]);*/
 
-
+        vector<mapc> p = find_bp();
 	for (int i = 0; i < 32;i++)
 	{
 		for (int k = 0;k <32;k++)
 		{
+                    bool a = false;
+                    for (int j = 0; j < p.size();j++)
+                    {
+                        if (p[j].getX() == i && p[j].getY() ==k)
+                        {
+                            a = true;
+                            cout << "\e[31m*";
+                            break;
+                        }
+                    }
+                    if (!a)
+                    {
 			if (grid[i][k].read == 0)
                         {
 				cout << "\e[34m-";
@@ -63,6 +76,7 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
                                         cout << "\e[34m-";
                                  }
                         }
+                    }
 		}
 		cout << endl;
 	}
@@ -291,4 +305,33 @@ vector<int> Mapt::search(int sx, int sy, int dx, int dy)
         cout << list[i] << endl;
     }
     return list;
+}
+vector<mapc> Mapt::find_bp()
+{
+    int lco = 9999;
+    vector<mapc> vco;
+    for (int i = 0; i < 32;i++)
+    {
+        for (int j = 0; j < 32; j++)
+        {
+            //cout << i << " " << j << endl;
+            mapc l(i,j);
+            //cout << l.nabours() << endl;
+            if (l.nabours() < lco&&l.nabours() > 1)
+            {
+                vco.clear();
+                lco = l.nabours();
+                vco.push_back(l);
+            }
+            else if (l.nabours() == lco)
+            {
+                vco.push_back(l);
+            }
+        }
+    }
+    for (int i =0; i < vco.size();i++)
+    {
+        cout << vco[i].getX() << " " << vco[i].getY() << endl;
+    }
+    return vco;
 }

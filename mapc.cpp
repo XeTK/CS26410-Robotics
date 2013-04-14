@@ -60,6 +60,30 @@ void mapc::check()
     }        
 }
 
+int mapc::nabours()
+{
+    rsens **map;
+    Mapt::getGrid(&map);
+    int ar = 0;
+    if (valid(x,y))
+    {
+        if (map[x][y].read > 0||map[x][y].read == -1)
+        {
+            //ar++;
+            if (top == true)
+                ar++;
+            if (bottom == true)
+                ar++;
+            if (left == true)
+                ar++;
+            if (right == true)
+                ar++;
+            return ar;
+        }
+    }
+    return -1;
+}
+
 int mapc::getX()
 {
     return x;

@@ -7,6 +7,10 @@
       </df>
       <in>Mapt.cpp</in>
       <in>Mapt.h</in>
+      <in>cord.h</in>
+      <in>mapc.cpp</in>
+      <in>mapc.h</in>
+      <in>rsens.h</in>
       <in>simple.cpp</in>
       <in>simple.h</in>
     </df>

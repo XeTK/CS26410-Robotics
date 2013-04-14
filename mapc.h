@@ -19,6 +19,7 @@ public:
     int getX();
     int getY();
     static bool valid(int ix, int iy);
+    int nabours();
 private:
     int x, y;
     bool top,bottom,left,right;

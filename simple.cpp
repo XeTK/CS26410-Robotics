@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
                 cout << "0: Exit" << endl;
                 cout << "1: Return to nav" << endl;
                 cout << "2: Go to cord" << endl;
+                cout << "3: Find Best Hiding spot " << endl;
                 int a;
                 cin >> a;
                 switch (a)
@@ -89,7 +90,10 @@ int main(int argc, char *argv[])
                         cout << "Enter y " << endl;
                         cin >> py;
                         simple::gotocord(px,py);
-                                
+                        break;
+                    /*case 3:
+                        simple::find_bp();
+                        break;*/
                     default:
                         retmenu = false;
                         break;
