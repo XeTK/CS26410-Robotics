@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
                     {
                         prex = x;
                         prey = y;
-                        Mapt::sens(sp,x,y);
+                        Mapt::sens(sp,x,y,rtod(pp.GetYaw()));
                         mapc m(x,y);
                     }
                     simple::nav();
@@ -322,14 +322,14 @@ void simple::move(int distance)
                 break;
             }
         }
-        else if (dir == 4)
+        else if (dir == 0)
         {
             if (prex - distance == x)
             {
                 break;
             }
         }
-        else if (dir == 0)
+        else if (dir == 1)
         {
             cout << (prey - distance) << endl;
             if (prey - distance == y)

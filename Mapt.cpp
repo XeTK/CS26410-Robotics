@@ -20,25 +20,27 @@ void Mapt::start()
     for (int i = 0; i < 32; i++)
         grid[i] = new rsens[32];
 }
-void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
+void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, int yaw)
 {
+    double *dp;
+    Mapt::jiggedsens(dp,sp,yaw);
 	printf("X:%i,Y:%i\n",x,y);
 	grid[x][y].read = -1;
         grid[x][y].type = "";
 
-	range(x, y -1, x -1, y -1, (sp[3] + sp[4]),av(vtop),"top");
-        vtop.push_back(sp[3] + sp[4]);
+	range(x, y -1, x -1, y -1, (dp[3] + dp[4]) /2,av(vtop),"top");
+        vtop.push_back((dp[3] + dp[4]) /2);
        
 
-	range(x -1,y, x-2,y,(sp[0] + sp[15]),av(vleft),"left");
-        vleft.push_back(sp[0] + sp[15]);
+	range(x -1,y, x-2,y,((dp[0] + dp[15]) /2),av(vleft),"left");
+        vleft.push_back((dp[0] + dp[15]) /2);
         
-	range(x +1,y, x+2,y,(sp[7] + sp[8]),av(vright),"right");
-        vright.push_back(sp[7] + sp[8]);
+	range(x +1,y, x+2,y,((dp[7] + dp[8]) /2),av(vright),"right");
+        vright.push_back((dp[7] + dp[8]) /2);
 
 
-	range(x, y + 1, x + 1, y + 1, (sp[12] + sp[11]),av(vbottom),"bottom");
-        vbottom.push_back(sp[12] + sp[11]);
+	range(x, y + 1, x + 1, y + 1, (dp[12] + dp[11]) /2,av(vbottom),"bottom");
+        vbottom.push_back((dp[12] + dp[11]) /2);
 
         vector<mapc> p = find_bp();
 	for (int i = 0; i < 32;i++)
@@ -51,7 +53,10 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
                         if (p[j].getX() == i && p[j].getY() ==k)
                         {
                             a = true;
-                            cout << "\e[31m*";
+                            if (grid[i][k].read == -1)
+                                cout << "\e[31m*";
+                            else
+                                cout << "\e[31m" << (int)grid[i][k].read;
                             break;
                         }
                     }
@@ -69,7 +74,8 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
                         {
                                  if (grid[i][k].read > gv(grid[i][k].type))
                                  {
-                                        cout << "\e[36m^";
+                                        //cout << "\e[36m^";
+                                     cout << "\e[36m" << (int)grid[i][k].read ;
                                  }
                                  else
                                  {
@@ -86,24 +92,24 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y)
 /*Range converts are double into a int of a specific value so we can gage how close we are to something*/		
 void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, string type)
 {
-   // cout << sens << endl;
+    sens = (int)(sens * 100);
+    cout << sens << endl;
         if (ox >= 0 && ox < 32)
         {
                 if (oy >= 0 && oy < 32)
                 {
                         if(grid[ox][oy].read != -1)
                         {
-                            cout << sens << endl;
-                                if (sens > range)
+                                if (sens >= 50 )//&& sens < (int)(gv(type) + 1))
                                 {
-                                        grid[ox][oy].read = sens;
+                                        grid[ox][oy].read = sens /100;
                                         grid[ox][oy].type = type;
                                 }
-                                else
+                                /*else
                                 {
                                         grid[ox][oy].read = 0;
                                         grid[ox][oy].type = type;
-                                }
+                                }*/
                         }
                 }
         }
@@ -114,16 +120,16 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                 {
                         if(grid[sx][sy].read != -1)
                         {
-                                if (sens > range)
+                                if (sens >= (int)(gv(type) * 100)&& sens > 425)
                                 {
-					grid[sx][sy].read = sens;
+					grid[sx][sy].read = sens /100;
                                         grid[sx][sy].type = type;
                                 }
-                                else
+                                /*else
                                 {
                                         grid[sx][sy].read = 0;
                                         grid[sx][sy].type = type;
-                                }
+                                }*/
                         }
                 }
         }
@@ -132,7 +138,7 @@ double Mapt::av(std::vector<double> in)
 {
     double ret = 0;
     for (int i =0; i < in.size();i++)
-        ret += (in[i] - ((in[i] / 100) * 25));
+        ret += (in[i] - ((in[i] / 100)));
     ret = ret / in.size();
 
     return ret;
@@ -154,7 +160,6 @@ void Mapt::jiggedsens(double *&array, PlayerCc::RangerProxy &sp, int yaw)
 {
     if (sp.GetRangeCount() != 0)
     {
-
 	int dif = (int)((int)(yaw + 180) / 22.5);
 
 	if (dif < 0)
