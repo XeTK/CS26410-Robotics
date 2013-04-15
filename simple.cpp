@@ -71,7 +71,8 @@ int main(int argc, char *argv[])
                 cout << "0: Exit" << endl;
                 cout << "1: Return to nav" << endl;
                 cout << "2: Go to cord" << endl;
-                cout << "3: Find Best Hiding spot " << endl;
+                cout << "3: Turn to angle " << endl;
+                cout << "4: Move" << endl;
                 int a;
                 cin >> a;
                 switch (a)
@@ -91,9 +92,18 @@ int main(int argc, char *argv[])
                         cin >> py;
                         simple::gotocord(px,py);
                         break;
-                    /*case 3:
-                        simple::find_bp();
-                        break;*/
+                    case 3:
+                        cout << "Enter Angle" << endl;
+                        int d;
+                        cin >> d;
+                        simple::turntoangle(d);
+                        break;
+                    case 4:
+                        cout << "Enter Move" << endl;
+                        int v;
+                        cin >> v;
+                        simple::move(v);
+                        break;
                     default:
                         retmenu = false;
                         break;
@@ -303,6 +313,8 @@ void simple::move(int distance)
         
         int x = ((pp.GetXPos() * 100) / 60) + 16, y = ((pp.GetYPos() * 100) / 60) + 16;
         
+        cout << dir << " " << x << " " << y << " " << endl;
+        
         if (dir == 2)
         {
             if (prex + distance == x)
@@ -317,8 +329,9 @@ void simple::move(int distance)
                 break;
             }
         }
-        else if (dir == 1)
+        else if (dir == 0)
         {
+            cout << (prey - distance) << endl;
             if (prey - distance == y)
             {
                 break;
