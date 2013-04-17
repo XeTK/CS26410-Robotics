@@ -68,7 +68,7 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, int yaw)
                         }
 			else if (grid[i][k].read == -1)
                         {
-				cout << "\e[33m*";
+				cout << "\e[33m ";
                         }
                         else 
                         {
