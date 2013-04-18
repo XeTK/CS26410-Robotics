@@ -7,10 +7,11 @@
 #include <libplayerc++/playerc++.h>
 using namespace PlayerCc;
 
- static PlayerClient    robot("localhost");
- static Position2dProxy pp(&robot,0);
- static RangerProxy     sp(&robot,0);
- static bool retmenu = false;
+static PlayerClient    robot("localhost");
+static Position2dProxy pp(&robot,0);
+static RangerProxy     sp(&robot,0);
+static bool retmenu = false;
+//main method, this is where the magic happens
 int main(int argc, char *argv[])
 {
     
@@ -113,6 +114,7 @@ int main(int argc, char *argv[])
 	}
         
 }
+//this method is to navigate around the area and make sure we dont bump into anything
 void simple::nav()
 {
     if (sp[3] < 0.5||sp[4] < 0.5)
@@ -152,8 +154,10 @@ void simple::nav()
     }
     pp.SetSpeed(0.5,0);
 }
+//this method is to build a route to a set cordernate 
 void simple::gotocord(int vx, int vy)
 {
+	//this method is unfinished
      int ix = ((pp.GetXPos() * 100) / 60) + 16, iy = ((pp.GetYPos() * 100) / 60) + 16;
      cout << vx << " " << vy << " " << ix << " " << iy << endl;
      vector<int> l = Mapt::search(ix,iy,vx,vy);
@@ -163,6 +167,7 @@ void simple::gotocord(int vx, int vy)
          move(1);
      }
 }
+//rotate the robot to than angle
 void simple::turnangle(int angle)
 {
     cout << "turn angle" << endl;
@@ -197,7 +202,7 @@ void simple::turnangle(int angle)
         pp.SetSpeed(0,turnrate);     
     }       
 }
-
+//turn the robot to a set angle
 void simple::turntoangle(int angle)
 {
     cout << "turn to angle" << endl;
@@ -232,7 +237,7 @@ void simple::turntoangle(int angle)
             pp.SetSpeed(0,turnrate);   
     }  
 }
-
+//the align method makes sure that the robot is a set distance away from the wall before it takes sensor readings
 void simple::align()
 {
     cout << "Align" << endl;
@@ -280,6 +285,7 @@ void simple::align()
     }
     pp.SetSpeed(0,0);
 }
+//movement moves the robot forward one grid refrence forward
 void simple::move(int distance)
 {
 
@@ -348,6 +354,7 @@ void simple::move(int distance)
     }
     pp.SetSpeed(0,0);
 }
+//todo with enabling the menu
 void simple::do_sigint(int dummy)
 {
     cout << "Menu activated: pleas wait" << endl;
