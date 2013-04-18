@@ -20,18 +20,19 @@ void Mapt::start()
     for (int i = 0; i < 32; i++)
         grid[i] = new rsens[32];
 }
-
+//this method is used to build up a ocupancy grid of the area the robot ocupises
 void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, int yaw)
 {
-    double *dp;
-    Mapt::jiggedsens(dp,sp,yaw);
+    	double *dp;
+    	//get are ajusted sensor readings
+    	Mapt::jiggedsens(dp,sp,yaw);
 	printf("X:%i,Y:%i\n",x,y);
 	grid[x][y].read = -1;
         grid[x][y].type = "";
 
+	//get the cordernates of the blocks around the robot
 	range(x, y -1, x -1, y -1, (dp[3] + dp[4]) /2,av(vtop),"top");
         vtop.push_back((dp[3] + dp[4]) /2);
-       
 
 	range(x -1,y, x-2,y,((dp[0] + dp[15]) /2),av(vleft),"left");
         vleft.push_back((dp[0] + dp[15]) /2);
@@ -39,11 +40,12 @@ void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, int yaw)
 	range(x +1,y, x+2,y,((dp[7] + dp[8]) /2),av(vright),"right");
         vright.push_back((dp[7] + dp[8]) /2);
 
-
 	range(x, y + 1, x + 1, y + 1, (dp[12] + dp[11]) /2,av(vbottom),"bottom");
         vbottom.push_back((dp[12] + dp[11]) /2);
 
+	//get best hiding locations within the map
         vector<mapc> p = find_bp();
+        //print out a map to the screen for the end user to see
 	for (int i = 0; i < 32;i++)
 	{
 		for (int k = 0;k <32;k++)
@@ -135,6 +137,7 @@ void Mapt::range(int ox, int oy, int sx, int sy, double sens, double range, stri
                 }
         }
 }
+//calculate the avrage between all the sensor readings that have taken place
 double Mapt::av(std::vector<double> in)
 {
     double ret = 0;
@@ -144,6 +147,7 @@ double Mapt::av(std::vector<double> in)
 
     return ret;
 }
+//return the avrage for the sensor that has read the area
 double Mapt::gv(string type)
 {
     if (type == "right")
@@ -157,6 +161,7 @@ double Mapt::gv(string type)
     else
         return 0;
 }
+//reajust the sensors so that they align properly and always esentialy stay facing the same way among the map
 void Mapt::jiggedsens(double *&array, PlayerCc::RangerProxy &sp, int yaw)
 {
     if (sp.GetRangeCount() != 0)
@@ -180,12 +185,15 @@ void Mapt::jiggedsens(double *&array, PlayerCc::RangerProxy &sp, int yaw)
      }
     
 }
+//Sets the pointer to the 2d array that holds the grid
 void Mapt::getGrid(rsens ***array)
 {
     *array = grid;
 }
+//Search method to build up a list of angles that the robot has to move within to get to the desired location
 vector<int> Mapt::search(int sx, int sy, int dx, int dy)
 {
+	/*Work in progress*/
     vector<int> list;
     int dirx = -1, diry = -1;
     
@@ -312,6 +320,7 @@ vector<int> Mapt::search(int sx, int sy, int dx, int dy)
     }
     return list;
 }
+//this method finds likly places that are good places to hide within the map created
 vector<mapc> Mapt::find_bp()
 {
     int lco = 9999;
