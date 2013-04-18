@@ -8,14 +8,14 @@
 #define UNKNOWN 0
 #define FREE -1
 using namespace std;
-//set up the cordernates when 
+//set up the cordernates for the location of a cell refrence within the map.
 mapc::mapc(int x, int y)
 {
     this->x = x;
     this->y = y;
     check();
 }
-
+//check the cells around the current cell to see what paths are free and what ways the robot can travel.
 void mapc::check()
 {
     rsens **map;
@@ -65,7 +65,7 @@ void mapc::check()
             right = false;    
     }        
 }
-
+//caluclate the number of free cells around the robot so that we can see if the spot is a good place for the robot to hide or not
 int mapc::nabours()
 {
     rsens **map;
@@ -89,7 +89,7 @@ int mapc::nabours()
     }
     return -1;
 }
-
+//Getter and setters for the class
 int mapc::getX()
 {
     return x;
@@ -114,6 +114,7 @@ bool mapc::getRight()
 {
     return right;
 }
+//return a boolean of if the location on the grid is a valid location.
 bool mapc::valid(int ix,int iy)
 {
     if (ix >= 0 && ix < 32)
