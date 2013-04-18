@@ -13,13 +13,14 @@ using namespace PlayerCc;
 static rsens **grid;
 static vector<double> vtop, vbottom, vleft, vright;
 /*Method to convert are values into a grid to be displayed*/
-
+//Default constuctor declaring the array at the creation of the map
 void Mapt::start()
 {
     grid = new rsens *[32];
     for (int i = 0; i < 32; i++)
         grid[i] = new rsens[32];
 }
+
 void Mapt::sens(PlayerCc::RangerProxy &sp,int x, int y, int yaw)
 {
     double *dp;
