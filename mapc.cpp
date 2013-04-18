@@ -8,7 +8,7 @@
 #define UNKNOWN 0
 #define FREE -1
 using namespace std;
-
+//set up the cordernates when 
 mapc::mapc(int x, int y)
 {
     this->x = x;
